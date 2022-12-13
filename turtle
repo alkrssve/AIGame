@@ -1,0 +1,72 @@
+import pygame
+import random
+
+# create the screen
+width, height = 600, 500
+screen = pygame.display.set_mode((width, height))
+
+# title and icon
+pygame.display.set_caption("Crazy Shape Game")
+
+# player
+playerImg = pygame.image.load('player.png')
+playerX = 10
+playerY = height - 80
+playerX_change = 0
+
+# enemy
+enemyImg = pygame.image.load('obstacle.png')
+enemyX = random.randint(0, width - 40)
+enemyY = -60
+enemyX_change = 0
+enemyY_change = 0.3
+
+# game loop
+running = True
+while running:
+
+    # RGB
+    screen.fill((0, 0, 0))
+
+    # player movement
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        # if keystroke is pressed check whether its right or left
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                playerX_change = -0.3
+            if event.key == pygame.K_RIGHT:
+                playerX_change = 0.3
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                playerX_change = 0
+
+    # enemy movement
+    if enemyY >= height:
+        enemyY = 0
+        enemyX = random.randint(0, width - 40)
+    enemyY += enemyY_change
+
+    # player movement
+    playerX += playerX_change
+
+    # boundary check
+    if playerX <= 0:
+        playerX = 0
+    elif playerX >= width - 40:
+        playerX = width - 40
+
+    # draw player
+    screen.blit(playerImg, (playerX, playerY))
+
+    # draw enemy
+    screen.blit(enemyImg, (enemyX, enemyY))
+
+    # collision (boundary check)
+    if (playerX + 20 > enemyX - 20 and playerX - 20 < enemyX + 20) and (playerY + 20 > enemyY - 20 and playerY - 20 < enemyY + 20):
+        running = False
+
+    pygame.display.update()
+
+pygame.quit()
